@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>mytickets | Book Movie Tickets Online</title>
+
+    <link rel="stylesheet" href="styles.css">
+
+    <link rel="icon" type="image/png" href="mytickets_icon.png">
+
+</head>
+
+<body>
+
+    <!-- Navigation Bar -->
+    <header>
+        <div class="logo">
+            <h1>my<span>tickets</span></h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Movies</a></li>
+                <li><a href="#">Theaters</a></li>
+                <li><a href="#">My Bookings</a></li>
+            </ul>
+        </nav>
+        <div class="user-profile">
+            <button>Login</button>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main>
+        <!-- Hero Banner Section -->
+        <section class="hero-banner" id="hero-section">
+            <div class="hero-content">
+                <h2 id="hero-title">Featured Movie: American Psycho</h2>
+                <p id="hero-desc"> Horror/Comedy ‧ 1h 42m</p>
+                <button class="btn-book" id="hero-book-btn">Book Now</button>
+            </div>
+        </section>
+
+        <!-- Movie Catalog Grid Section -->
+        <section class="movie-catalog" id="catalog-section">
+            <h2>Now Showing</h2>
+            <div class="movies-grid" id="movie-container">
+
+
+
+            </div>
+        </section>
+
+        <!-- Theater & Timing Selection Screen -->
+        <section id="theater-screen" style="display: none; padding: 40px 5%;">
+            <h2 id="theater-movie-title">Select Theater & Time</h2>
+
+            <div class="theater-list">
+                <!-- Theater 1 -->
+                <div class="theater-card">
+                    <h3>Prasads Multiplex</h3>
+                    <p>Necklace Road</p>
+                    <div class="timings">
+                        <button class="btn-time">10:30 AM</button>
+                        <button class="btn-time">02:15 PM</button>
+                        <button class="btn-time">06:00 PM</button>
+                    </div>
+                </div>
+
+                <!-- Theater 2 -->
+                <div class="theater-card">
+                    <h3>AMB Cinemas</h3>
+                    <p>Gachibowli</p>
+                    <div class="timings">
+                        <button class="btn-time">11:00 AM</button>
+                        <button class="btn-time">03:30 PM</button>
+                        <button class="btn-time">09:15 PM</button>
+                    </div>
+                </div>
+            </div>
+
+            <br><br>
+            <button id="btn-back-to-catalog" style="background: none; color: #7f8c8d; border: none; cursor: pointer;">Go
+                Back to Catalog</button>
+        </section>
+
+        <section id="booking-screen" style="display: none; padding: 40px 5%; text-align: center;">
+            <h2>Select Your Seats</h2>
+
+            <div class="cinema-screen">Screen</div>
+
+            <div class="seat-map" id="seat-map">
+                <div class="row">
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                    <div class="seat occupied"></div>
+                    <div class="seat occupied"></div>
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                </div>
+                <div class="row">
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                </div>
+                <div class="row">
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                </div>
+                <div class="row">
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                </div>
+                <div class="row">
+                    <div class="seat occupied"></div>
+                    <div class="seat occupied"></div>
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                    <div class="seat"></div>
+                </div>
+            </div>
+
+            <p class="summary">
+                You have selected <span id="count">0</span> seats for a total of ₹<span id="total">0</span>.
+            </p>
+            <button class="btn-book" id="btn-checkout">Proceed to Checkout</button>
+            <br><br>
+            <button id="btn-back" style="background: none; color: #7f8c8d; border: none; cursor: pointer;">Go Back to
+                Catalog</button>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 mytickets. All Property Rights Reserved.</p>
+    </footer>
+
+    <script src="app.js"></script>
+
+</body>
+
+</html>
