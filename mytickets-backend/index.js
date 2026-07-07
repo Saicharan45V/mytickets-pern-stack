@@ -67,7 +67,8 @@ app.get("/api/movies", async (req, res) => {
         const result = await pool.query("SELECT * FROM movies ORDER BY id ASC");
         res.json(result.rows);
     } catch (err) {
-        res.status(500).json({ error: "Failed to fetch movies" });
+        // 🚨 This sends the EXACT PostgreSQL error to your browser!
+        res.status(500).json({ error: "Failed to fetch movies", details: err.message });
     }
 });
 
