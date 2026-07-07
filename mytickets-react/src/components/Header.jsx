@@ -1,6 +1,7 @@
 
 
 function Header({ currentScreen, onNavigate, user, onLogout }) {
+    const isAdmin = localStorage.getItem("isAdmin") === "true";
     return (
         <header className="header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '15px 5%', background: '#121212', borderBottom: '1px solid #222' }}>
             {/* Brand Logo */}
@@ -37,6 +38,15 @@ function Header({ currentScreen, onNavigate, user, onLogout }) {
                 >
                     <strong>My Bookings</strong>
                 </button>
+
+                {isAdmin && (
+                    <button
+                        onClick={() => onNavigate('admin')}
+                        style={{ color: 'red', fontWeight: 'bold', background: 'none', border: 'none', cursor: 'pointer' }}
+                    >
+                        Admin Dashboard
+                    </button>
+                )}
 
                 {/* Dynamic Login / User Profile Button */}
                 {user ? (

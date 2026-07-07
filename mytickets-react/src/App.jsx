@@ -6,6 +6,7 @@ import MovieCard from './components/MovieCard';
 import BookingScreen from './components/BookingScreen';
 import AuthScreen from './components/AuthScreen';
 import MyBookingsScreen from './components/MyBookingsScreen';
+import AdminDashboard from './components/AdminDashboard';
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
@@ -41,6 +42,16 @@ function App() {
       setCurrentScreen('auth');
       return;
     }
+
+    // 👈 ADD THIS ADMIN CHECK
+    if (screenName === 'admin') {
+      const isAdmin = localStorage.getItem("isAdmin") === "true" || localStorage.getItem("isAdmin") === true;
+      if (!isAdmin) {
+        alert("🚨 Access Denied. Admins only!");
+        return;
+      }
+    }
+
     setCurrentScreen(screenName);
   };
 
@@ -166,6 +177,11 @@ function App() {
             user={user}
             onBack={() => setCurrentScreen('catalog')}
           />
+        )}
+
+        {/* 👈 CONDITION 6: ADMIN DASHBOARD */}
+        {currentScreen === 'admin' && (
+          <AdminDashboard />
         )}
 
       </main>

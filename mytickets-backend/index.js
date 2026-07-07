@@ -52,7 +52,7 @@ app.post("/api/login", async (req, res) => {
         console.log("🔑 USER LOGGED IN:", user.rows[0].username);
         res.json({
             success: true,
-            user: { id: user.rows[0].id, username: user.rows[0].username, email: user.rows[0].email }
+            user: { id: user.rows[0].id, username: user.rows[0].username, email: user.rows[0].email, is_admin: user.rows[0].is_admin }
         });
     } catch (err) {
         console.error("Login Error:", err.message);
@@ -62,8 +62,13 @@ app.post("/api/login", async (req, res) => {
 
 // --- MOVIE & SEAT ROUTES ---
 
-app.get("/api/movies", (req, res) => {
-    res.json(movies);
+app.get("/api/movies", async (req, res) => {
+    try {
+        const result = await pool.query("SELECT * FROM movies ORDER BY id ASC");
+        res.json(result.rows);
+    } catch (err) {
+        res.status(500).json({ error: "Failed to fetch movies" });
+    }
 });
 
 app.get("/api/seats", async (req, res) => {
@@ -117,6 +122,68 @@ app.get("/api/my-bookings/:userId", async (req, res) => {
         res.json(userBookings.rows);
     } catch (err) {
         res.status(500).json({ error: "Failed to fetch booking history" });
+    }
+});
+
+// --- ADMIN ROUTES ---
+
+// The Middleware Bouncer
+const isAdmin = async (req, res, next) => {
+    try {
+        const userId = req.headers.userid; // We will send this from React
+
+        if (!userId) {
+            return res.status(403).json({ error: "No User ID provided" });
+        }
+
+        // Check if this specific user has is_admin set to true in the database
+        const user = await pool.query("SELECT is_admin FROM users WHERE id = $1", [userId]);
+
+        if (user.rows[0] && user.rows[0].is_admin === true) {
+            next(); // They are an admin, let them through!
+        } else {
+            res.status(403).json({ error: "Access Denied. Admins only." });
+        }
+    } catch (err) {
+        console.error("Admin Check Error:", err.message);
+        res.status(500).json({ error: "Server error checking admin status" });
+    }
+};
+
+// The Protected Route (Notice we pass 'isAdmin' as the middle argument)
+app.get("/api/admin/all-bookings", isAdmin, async (req, res) => {
+    try {
+        // Fetch every booking in the database, newest first
+        const allBookings = await pool.query("SELECT * FROM bookings ORDER BY booked_at DESC");
+        res.json(allBookings.rows);
+    } catch (err) {
+        console.error("Admin Fetch Error:", err.message);
+        res.status(500).json({ error: "Failed to fetch all bookings" });
+    }
+});
+
+// Admin: Add a new movie
+app.post("/api/admin/movies", isAdmin, async (req, res) => {
+    try {
+        const { title, genre, image, screen } = req.body;
+        const newMovie = await pool.query(
+            "INSERT INTO movies (title, genre, image, screen) VALUES ($1, $2, $3, $4) RETURNING *",
+            [title, genre, image, screen]
+        );
+        res.status(201).json(newMovie.rows[0]);
+    } catch (err) {
+        res.status(500).json({ error: "Failed to add movie" });
+    }
+});
+
+// Admin: Delete a movie
+app.delete("/api/admin/movies/:id", isAdmin, async (req, res) => {
+    try {
+        const { id } = req.params;
+        await pool.query("DELETE FROM movies WHERE id = $1", [id]);
+        res.json({ message: "Movie deleted successfully" });
+    } catch (err) {
+        res.status(500).json({ error: "Failed to delete movie" });
     }
 });
 
