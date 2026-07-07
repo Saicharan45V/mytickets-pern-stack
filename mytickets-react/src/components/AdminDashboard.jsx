@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 
-// 1. Add these states at the top of your AdminDashboard component
-const [newMovie, setNewMovie] = useState({ title: "", genre: "", image: "", screen: "" });
-const [dbMovies, setDbMovies] = useState([]); // To store the list of editable movies
+
 
 export default function AdminDashboard() {
+    // 1. Add these states at the top of your AdminDashboard component
+    const [newMovie, setNewMovie] = useState({ title: "", genre: "", image: "", screen: "" });
+    const [dbMovies, setDbMovies] = useState([]); // To store the list of editable movies
     const [allBookings, setAllBookings] = useState([]);
     const [error, setError] = useState("");
 
