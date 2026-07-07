@@ -1,23 +1,35 @@
 const { Pool } = require("pg");
 
-// A "Pool" manages multiple open database connections automatically
-const pool = new Pool({
-    user: "postgres",          // Default PostgreSQL superuser
-    host: "localhost",         // Hosting on your local machine
-    database: "mytickets_db",  // The database we created earlier!
-    password: "sai12345", // ⚠️ REPLACE THIS with the exact password you set during installation!
-    port: 5432,                // Default PostgreSQL port
-});
+// 1. Check if we are on Render (Render will provide a DATABASE_URL)
+const isProduction = process.env.DATABASE_URL;
 
+// 2. Set up the configuration dynamically
+const poolConfig = isProduction
+    ? {
+        // --- LIVE RENDER CONFIGURATION ---
+        connectionString: process.env.DATABASE_URL,
+        ssl: { rejectUnauthorized: false } // Required by Neon
+    }
+    : {
+        // --- LOCAL LAPTOP CONFIGURATION ---
+        user: "postgres",
+        host: "localhost",
+        database: "mytickets_db",
+        password: "sai12345",
+        port: 5432,
+    };
+
+// 3. Create the pool
+const pool = new Pool(poolConfig);
 
 // A quick helper query to verify our connection works!
 pool.query("SELECT NOW()", (err, res) => {
     if (err) {
         console.error("❌ Database connection failed:", err.message);
     } else {
-        console.log("🐘 Successfully connected to PostgreSQL at:", res.rows[0].now);
+        console.log("🐘 Successfully connected to PostgreSQL!");
     }
 });
 
-// Export the pool so index.js can use it to run SQL queries
+// Export the pool
 module.exports = pool;
