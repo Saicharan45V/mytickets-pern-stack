@@ -2,6 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const pool = require("./db");
 
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -186,6 +188,47 @@ app.delete("/api/admin/movies/:id", isAdmin, async (req, res) => {
     } catch (err) {
         res.status(500).json({ error: "Failed to delete movie" });
     }
+});
+
+app.post("/api/create-checkout-session", async (req, res) => {
+    try {
+        // 1. Extract the booking details sent from React
+        const { movieTitle, totalCost } = req.body;
+
+        // 2. Automatically detect if we are on localhost or live Vercel
+        const frontendURL = req.headers.origin || "http://localhost:5173";
+
+        // 3. Create the Stripe Session
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ["card"],
+            mode: "payment",
+            line_items: [
+                {
+                    price_data: {
+                        currency: "inr", // 🇮🇳 Indian Rupees
+                        product_data: {
+                            name: `${movieTitle} Ticket(s)`, // What shows up on the receipt
+                        },
+                        // 🚨 Stripe requires the smallest currency unit (paise). 
+                        // Multiply by 100 to convert Rupees to Paise!
+                        unit_amount: totalCost * 100,
+                    },
+                    quantity: 1, // We bundle the total cost into 1 item
+                },
+            ],
+            // 4. Where to send the user after Stripe is done
+            success_url: `${frontendURL}/success`, // We will build this React page next!
+            cancel_url: `${frontendURL}/`,         // Send back to home if they click back
+        });
+
+        // 5. Send the secure Stripe checkout URL back to React
+        res.json({ url: session.url });
+
+    } catch (err) {
+        console.error("Stripe Error:", err.message);
+        res.status(500).json({ error: "Failed to create checkout session" });
+    }
+
 });
 
 app.listen(5000, () => console.log(`🚀 PERN Server with Auth running on port 5000`));
