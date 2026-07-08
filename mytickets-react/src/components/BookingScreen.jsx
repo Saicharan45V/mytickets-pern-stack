@@ -30,43 +30,53 @@ function BookingScreen({ movieTitle, theater, showtime, user, onRequireLogin, on
         }
     };
 
-    const handleCheckout = () => {
-        // 1. GATEKEEPER: Check if user is logged in first!
+    // 🚨 THE NEW STRIPE CHECKOUT FUNCTION
+    const handleCheckout = async () => {
+        // GATEKEEPER 1: Check if user is logged in
         if (!user) {
             alert("🔒 Please log in or register to complete your ticket reservation!");
             onRequireLogin();
             return;
         }
 
+        // GATEKEEPER 2: Did they select a seat?
         if (selectedSeats.length === 0) {
             alert("Please select at least one seat before proceeding.");
             return;
         }
 
-        const bookingData = {
-            userId: user.id, // <-- ATTACH LOGGED IN USER ID!
-            movieTitle,
-            theater,
-            showtime,
-            selectedSeats,
-            totalCost: selectedSeats.length * ticketPrice
-        };
+        const totalCost = selectedSeats.length * ticketPrice;
 
-        fetch(`${API_URL}/api/bookings`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(bookingData)
-        })
-            .then((res) => res.json())
-            .then((serverReply) => {
-                alert(`🎉 ${serverReply.message}\nBooked ${selectedSeats.length} seats for ${movieTitle} at ${theater} (${showtime}).`);
-                setOccupiedSeats(prev => [...prev, ...selectedSeats]);
-                setSelectedSeats([]);
-            })
-            .catch((error) => {
-                console.error("❌ Failed to book:", error);
-                alert("Something went wrong communicating with the ticket server!");
+        try {
+            // Ask the backend to create the bill via Stripe
+            const response = await fetch(`${API_URL}/api/create-checkout-session`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    movieTitle: movieTitle,
+                    totalCost: totalCost
+                }),
             });
+
+            if (!response.ok) {
+                throw new Error("Failed to connect to checkout service");
+            }
+
+            const data = await response.json();
+
+            // The Magic Handoff: If the backend gives us a URL, teleport the user!
+            if (data.url) {
+                window.location.href = data.url;
+            } else {
+                alert("Stripe session creation failed.");
+            }
+
+        } catch (err) {
+            console.error("Checkout Error:", err.message);
+            alert("Something went wrong preparing your checkout.");
+        }
     };
 
     return (
@@ -110,6 +120,8 @@ function BookingScreen({ movieTitle, theater, showtime, user, onRequireLogin, on
 
             <div style={{ display: "flex", justifyContent: "center", gap: "20px", marginTop: "25px" }}>
                 <button onClick={onBack} style={{ background: "transparent", color: "#7f8c8d", border: "1px solid #7f8c8d", padding: "10px 20px", borderRadius: "4px", cursor: "pointer" }}>Back to Theaters</button>
+
+                {/* This button now triggers the Stripe handoff! */}
                 <button onClick={handleCheckout} className="btn-book">Proceed to Checkout</button>
             </div>
         </section>
