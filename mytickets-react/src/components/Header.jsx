@@ -1,7 +1,6 @@
-
-
 function Header({ currentScreen, onNavigate, user, onLogout }) {
-    const isAdmin = localStorage.getItem("isAdmin") === "true" || localStorage.getItem("isAdmin") === true;
+    // Notice how the 'const isAdmin...' line is completely gone!
+
     return (
         <header className="header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '15px 5%', background: '#121212', borderBottom: '1px solid #222' }}>
             {/* Brand Logo */}
@@ -32,17 +31,21 @@ function Header({ currentScreen, onNavigate, user, onLogout }) {
                     <strong>Theaters</strong>
                 </button>
 
-                <button
-                    onClick={() => onNavigate('dashboard')}
-                    style={{ background: 'none', border: 'none', color: currentScreen === 'dashboard' ? '#e50914' : '#fff', cursor: 'pointer', fontSize: '1rem' }}
-                >
-                    <strong>My Bookings</strong>
-                </button>
+                {/* Only show My Bookings if logged in */}
+                {user && (
+                    <button
+                        onClick={() => onNavigate('dashboard')}
+                        style={{ background: 'none', border: 'none', color: currentScreen === 'dashboard' ? '#e50914' : '#fff', cursor: 'pointer', fontSize: '1rem' }}
+                    >
+                        <strong>My Bookings</strong>
+                    </button>
+                )}
 
-                {isAdmin && (
+                {/* 👈 THE MAGIC ADMIN BUTTON (Now using user?.is_admin) */}
+                {user?.is_admin && (
                     <button
                         onClick={() => onNavigate('admin')}
-                        style={{ color: 'red', fontWeight: 'bold', background: 'none', border: 'none', cursor: 'pointer' }}
+                        style={{ color: 'red', fontWeight: 'bold', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1rem' }}
                     >
                         Admin Dashboard
                     </button>
