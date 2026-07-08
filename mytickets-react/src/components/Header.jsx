@@ -1,7 +1,7 @@
 
 
 function Header({ currentScreen, onNavigate, user, onLogout }) {
-    const isAdmin = localStorage.getItem("isAdmin") === "true";
+    const isAdmin = localStorage.getItem("isAdmin") === "true" || localStorage.getItem("isAdmin") === true;
     return (
         <header className="header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '15px 5%', background: '#121212', borderBottom: '1px solid #222' }}>
             {/* Brand Logo */}
