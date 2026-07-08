@@ -7,6 +7,7 @@ import BookingScreen from './components/BookingScreen';
 import AuthScreen from './components/AuthScreen';
 import MyBookingsScreen from './components/MyBookingsScreen';
 import AdminDashboard from './components/AdminDashboard';
+import SuccessScreen from './components/SuccessScreen';
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
@@ -33,6 +34,15 @@ function App() {
         setActiveMovie(data[3] || data[0]);
       })
       .catch((error) => console.error("❌ Backend error:", error));
+  }, []);
+
+  useEffect(() => {
+    // If Stripe redirects us here with "/success" in the URL, switch to the success screen!
+    if (window.location.pathname === '/success') {
+      setCurrentScreen('success');
+      // Clean up the URL so it looks nice again
+      window.history.replaceState(null, '', '/');
+    }
   }, []);
 
   // Top Nav Click Handler
@@ -178,10 +188,16 @@ function App() {
           />
         )}
 
+        {/* CONDITION 6: STRIPE SUCCESS SCREEN */}
+        {currentScreen === 'success' && (
+          <SuccessScreen onNavigate={handleTopNavigation} />
+        )}
+
         {/* 👈 CONDITION 6: ADMIN DASHBOARD */}
         {currentScreen === 'admin' && (
           <AdminDashboard user={user} /> // <-- Pass the user here!
         )}
+
 
       </main>
     </div>

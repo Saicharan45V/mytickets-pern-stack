@@ -68,6 +68,16 @@ function BookingScreen({ movieTitle, theater, showtime, user, onRequireLogin, on
 
             // The Magic Handoff: If the backend gives us a URL, teleport the user!
             if (data.url) {
+                // 👈 ADD THIS: Save the ticket details temporarily before we leave!
+                localStorage.setItem("pendingBooking", JSON.stringify({
+                    userId: user.id,
+                    movieTitle: movieTitle,
+                    theater: theater,
+                    showtime: showtime,
+                    selectedSeats: selectedSeats,
+                    totalCost: totalCost
+                }));
+
                 window.location.href = data.url;
             } else {
                 alert("Stripe session creation failed.");
