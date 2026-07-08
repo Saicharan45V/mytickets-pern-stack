@@ -125,7 +125,7 @@ function BookingScreen({ movieTitle, theater, showtime, user, onRequireLogin, on
 
             <p className="text" style={{ textAlign: "center", marginTop: "20px" }}>
                 You have selected <span id="count" style={{ color: "#e50914", fontWeight: "bold" }}>{selectedSeats.length}</span> seats
-                for a price of ₹<span id="total" style={{ color: "#e50914", fontWeight: "bold" }}>{selectedSeats.length * ticketPrice}</span>
+                for a price of ₹<span id="total" style={{ color: "#e50914", fontWeight: "bold" }}>{selectedSeats.length * ticketPrice}</span><br></br><strong style={{ color: '#00ff88', fontSize: '18px', fontWeight: 'normal' }}>(use 4242 4242 4242 4242 as a test credit card number, any future date, and use fake email). To get your tickets</strong>
             </p>
 
             <div style={{ display: "flex", justifyContent: "center", gap: "20px", marginTop: "25px" }}>

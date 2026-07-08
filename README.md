@@ -2,7 +2,9 @@
 
 ![MyTickets Hero](https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=1200&q=80)
 
+
 **Live Demo:** [[Live Website Link](https://mytickets-pern-stack.vercel.app/)]
+
 
 MyTickets is a complete, full-stack movie ticketing web application built with the **PERN Stack** (PostgreSQL, Express, React, Node.js). It features secure user authentication, real-time seat reservation, an Admin Command Center, and live payment processing via **Stripe Checkout**.
 
