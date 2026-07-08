@@ -97,7 +97,7 @@ export default function AdminDashboard({ user }) {
                 </div>
                 <div style={{ backgroundColor: '#222', padding: '20px', borderRadius: '8px', width: '200px' }}>
                     <h3>Total Revenue</h3>
-                    <p style={{ fontSize: '24px', color: '#00ff88', fontWeight: 'bold' }}>${totalRevenue}</p>
+                    <p style={{ fontSize: '24px', color: '#00ff88', fontWeight: 'bold' }}>₹{totalRevenue}</p>
                 </div>
             </div>
 
@@ -119,7 +119,7 @@ export default function AdminDashboard({ user }) {
                             <td style={{ padding: '12px' }}>{booking.movie_title}</td>
                             <td style={{ padding: '12px' }}>{booking.theater}</td>
                             <td style={{ padding: '12px' }}>User {booking.user_id}</td>
-                            <td style={{ padding: '12px', color: '#00ff88' }}>${booking.total_cost}</td>
+                            <td style={{ padding: '12px', color: '#00ff88' }}>₹{booking.total_cost}</td>
                             <td style={{ padding: '12px' }}>{new Date(booking.booked_at).toLocaleDateString()}</td>
                         </tr>
                     ))}
