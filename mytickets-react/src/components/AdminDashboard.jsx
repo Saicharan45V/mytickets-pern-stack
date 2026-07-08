@@ -1,19 +1,20 @@
 import { useState, useEffect } from 'react';
 
-
-
-export default function AdminDashboard() {
-    // 1. Add these states at the top of your AdminDashboard component
+// 1. Receive the 'user' prop from App.jsx!
+export default function AdminDashboard({ user }) {
     const [newMovie, setNewMovie] = useState({ title: "", genre: "", image: "", screen: "" });
-    const [dbMovies, setDbMovies] = useState([]); // To store the list of editable movies
+    const [dbMovies, setDbMovies] = useState([]);
     const [allBookings, setAllBookings] = useState([]);
     const [error, setError] = useState("");
 
-    useEffect(() => {
-        const userId = localStorage.getItem('userId');
+    // 2. Use your live Render URL so it works on Vercel
+    const API_URL = "https://mytickets-pern-stack.onrender.com";
 
-        // Note: Change this URL to your deployed Render URL if testing on Vercel!
-        fetch('http://localhost:5000/api/admin/all-bookings', {
+    useEffect(() => {
+        // 3. Grab the ID directly from the passed user state
+        const userId = user?.id;
+
+        fetch(`${API_URL}/api/admin/all-bookings`, {
             method: 'GET',
             headers: {
                 'userid': userId // Showing the bouncer our ID
@@ -26,28 +27,27 @@ export default function AdminDashboard() {
             .then(data => setAllBookings(data))
             .catch(err => setError(err.message));
 
-        fetch('http://localhost:5000/api/movies')
+        fetch(`${API_URL}/api/movies`)
             .then(res => res.json())
             .then(data => setDbMovies(data));
-    }, []);
+    }, [user]);
 
-    // 1. Handle typing in the form fields
+    // Handle typing in the form fields
     const handleInputChange = (e) => {
         setNewMovie({ ...newMovie, [e.target.name]: e.target.value });
     };
 
-    // 2. Handle submitting the new movie
+    // Handle submitting the new movie
     const handleAddMovie = async (e) => {
-        e.preventDefault(); // Prevents the page from refreshing when you click submit
-
-        const userId = localStorage.getItem('userId');
+        e.preventDefault();
+        const userId = user?.id;
 
         try {
-            const response = await fetch('http://localhost:5000/api/admin/movies', {
+            const response = await fetch(`${API_URL}/api/admin/movies`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json', // Telling the server we are sending JSON
-                    'userid': userId // Proving we are an admin
+                    'Content-Type': 'application/json',
+                    'userid': userId
                 },
                 body: JSON.stringify(newMovie)
             });
@@ -70,10 +70,10 @@ export default function AdminDashboard() {
         }
     };
 
-    // 3. The Delete Function
+    // The Delete Function
     const handleDeleteMovie = async (movieId) => {
-        const userId = localStorage.getItem('userId');
-        await fetch(`http://localhost:5000/api/admin/movies/${movieId}`, {
+        const userId = user?.id;
+        await fetch(`${API_URL}/api/admin/movies/${movieId}`, {
             method: 'DELETE',
             headers: { 'userid': userId }
         });
@@ -126,7 +126,6 @@ export default function AdminDashboard() {
                 </tbody>
             </table>
 
-            // 4. Put this UI below your Revenue stats in the return() statement!
             <div style={{ backgroundColor: '#222', padding: '20px', marginTop: '30px', borderRadius: '8px' }}>
                 <h2 style={{ borderBottom: '1px solid #444', paddingBottom: '10px' }}>Manage Movies</h2>
 
@@ -150,7 +149,6 @@ export default function AdminDashboard() {
                 <h2 style={{ borderBottom: '1px solid #444', paddingBottom: '10px' }}>Add New Movie</h2>
 
                 <form onSubmit={handleAddMovie} style={{ display: 'flex', flexDirection: 'column', gap: '15px', maxWidth: '400px', marginTop: '20px' }}>
-
                     <input
                         type="text"
                         name="title"
@@ -160,7 +158,6 @@ export default function AdminDashboard() {
                         required
                         style={{ padding: '12px', borderRadius: '4px', border: '1px solid #555', backgroundColor: '#333', color: 'white' }}
                     />
-
                     <input
                         type="text"
                         name="genre"
@@ -170,7 +167,6 @@ export default function AdminDashboard() {
                         required
                         style={{ padding: '12px', borderRadius: '4px', border: '1px solid #555', backgroundColor: '#333', color: 'white' }}
                     />
-
                     <input
                         type="text"
                         name="image"
@@ -180,7 +176,6 @@ export default function AdminDashboard() {
                         required
                         style={{ padding: '12px', borderRadius: '4px', border: '1px solid #555', backgroundColor: '#333', color: 'white' }}
                     />
-
                     <input
                         type="text"
                         name="screen"
@@ -190,18 +185,14 @@ export default function AdminDashboard() {
                         required
                         style={{ padding: '12px', borderRadius: '4px', border: '1px solid #555', backgroundColor: '#333', color: 'white' }}
                     />
-
                     <button
                         type="submit"
                         style={{ backgroundColor: '#e50914', color: '#fff', padding: '12px', fontSize: '16px', fontWeight: 'bold', border: 'none', borderRadius: '4px', cursor: 'pointer', marginTop: '10px' }}
                     >
                         + Add Movie to Database
                     </button>
-
                 </form>
             </div>
-
-
         </div>
     );
 }

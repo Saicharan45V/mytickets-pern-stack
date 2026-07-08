@@ -43,10 +43,9 @@ function App() {
       return;
     }
 
-    // 👈 ADD THIS ADMIN CHECK
+    // 👈 THE NEW ADMIN CHECK (Using live user state!)
     if (screenName === 'admin') {
-      const isAdmin = localStorage.getItem("isAdmin") === "true" || localStorage.getItem("isAdmin") === true;
-      if (!isAdmin) {
+      if (!user || !user.is_admin) {
         alert("🚨 Access Denied. Admins only!");
         return;
       }
@@ -181,7 +180,7 @@ function App() {
 
         {/* 👈 CONDITION 6: ADMIN DASHBOARD */}
         {currentScreen === 'admin' && (
-          <AdminDashboard />
+          <AdminDashboard user={user} /> // <-- Pass the user here!
         )}
 
       </main>
